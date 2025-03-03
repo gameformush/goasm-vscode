@@ -104,8 +104,12 @@ func (ui CodeUIStyle) Layout(gtx layout.Context) layout.Dimensions {
 	gutter := BoundsWidth(int(asm.Max)+pad, gutterWidth)
 	source := BoundsWidth(int(gutter.Max)+pad, blocksWidth*7/10)
 
-	// draw gutter
-	paint.FillShape(gtx.Ops, f32color.Gray8(0xE8), clip.Rect{
+	// draw gutter - use appropriate color based on theme
+	gutterColor := f32color.Gray8(0xE8) // light theme default
+	if isDarkMode {
+		gutterColor = f32color.Gray8(0x28) // dark theme
+	}
+	paint.FillShape(gtx.Ops, gutterColor, clip.Rect{
 		Min: image.Pt(int(gutter.Min), 0),
 		Max: image.Pt(int(gutter.Max), gtx.Constraints.Max.Y),
 	}.Op())
@@ -214,11 +218,20 @@ func (ui CodeUIStyle) Layout(gtx layout.Context) layout.Dimensions {
 		paint.FillShape(gtx.Ops, color.NRGBA{A: 0x40}, clip.Stroke{Path: *highlightPath, Width: 1}.Op())
 	}
 
+	// Get text color based on theme
+	textColor := func() color.NRGBA {
+		if isDarkMode {
+			return ui.Theme.Fg
+		}
+		return f32color.Black
+	}()
+
 	// assembly
 	asmClip := clip.Rect{
 		Min: image.Pt(int(jump.Min), 0),
 		Max: image.Pt(int(gutter.Min), gtx.Constraints.Max.Y),
 	}.Push(gtx.Ops)
+
 	for i, ix := range ui.Code.Insts {
 		SourceLine{
 			TopLeft:    image.Pt(int(asm.Min)+pad/2, i*lineHeight+int(ui.asm.scroll)),
@@ -226,7 +239,7 @@ func (ui CodeUIStyle) Layout(gtx layout.Context) layout.Dimensions {
 			TextHeight: ui.TextHeight,
 			Italic:     ix.Call != "",
 			Bold:       highlightAsmIndex == i,
-			Color:      f32color.Black,
+			Color:      textColor,
 		}.Layout(ui.Theme, gtx)
 
 		// jump line
@@ -269,6 +282,7 @@ func (ui CodeUIStyle) Layout(gtx layout.Context) layout.Dimensions {
 		Min: image.Pt(int(source.Min), 0),
 		Max: image.Pt(int(source.Max), gtx.Constraints.Max.Y),
 	}.Push(gtx.Ops)
+
 	top = int(ui.src.scroll)
 	for i, src := range ui.Code.Source {
 		if i > 0 {
@@ -279,7 +293,7 @@ func (ui CodeUIStyle) Layout(gtx layout.Context) layout.Dimensions {
 			Text:       src.File,
 			TextHeight: ui.TextHeight,
 			Bold:       highlightAsmIndex == i,
-			Color:      f32color.Black,
+			Color:      textColor,
 		}.Layout(ui.Theme, gtx)
 		top += lineHeight
 		for i, block := range src.Blocks {
@@ -293,7 +307,7 @@ func (ui CodeUIStyle) Layout(gtx layout.Context) layout.Dimensions {
 					Text:       fmt.Sprintf("%-4d %s", block.From+off, line),
 					TextHeight: ui.TextHeight,
 					Bold:       highlight,
-					Color:      f32color.Black,
+					Color:      textColor,
 				}.Layout(ui.Theme, gtx)
 				top += lineHeight
 			}

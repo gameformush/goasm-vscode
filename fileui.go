@@ -2,6 +2,7 @@ package main
 
 import (
 	"image"
+	"image/color"
 	"os"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"gioui.org/io/event"
 	"gioui.org/layout"
 	"gioui.org/op"
+	"gioui.org/op/paint"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
@@ -21,9 +23,10 @@ import (
 var workInProgressWASM bool
 
 type FileUIConfig struct {
-	Path    string
-	Watch   bool
-	Context int
+	Path      string
+	Watch     bool
+	Context   int
+	ServerURL string // URL of the HTTP server (if using client mode)
 }
 
 type FileUI struct {
@@ -79,6 +82,14 @@ func (ui *FileUI) Run(w *app.Window) error {
 	}
 
 	go func() {
+		// If using server mode, load the file from the server
+		if ui.Config.ServerURL != "" {
+			file, err := LoadNetworkFile(ui.Config.ServerURL, ui.Config.Path)
+			loadFinished(file, err)
+			return // No file watching in client mode (server handles it)
+		}
+
+		// Otherwise, load the file locally
 		var lastModTime time.Time
 		tick := time.NewTicker(100 * time.Millisecond)
 		defer tick.Stop()
@@ -185,6 +196,13 @@ func (ui *FileUI) Layout(gtx layout.Context) {
 			ui.Code.Code = selected.Load(ui.loadOptions())
 		}
 	}
+
+	// Set background color based on theme
+	bgColor := color.NRGBA{R: 0xFF, G: 0xFF, B: 0xFF, A: 0xFF} // White for light theme
+	if isDarkMode {
+		bgColor = ui.Theme.Bg // Use theme background for dark mode
+	}
+	paint.Fill(gtx.Ops, bgColor)
 
 	layout.Flex{
 		Axis: layout.Horizontal,

@@ -13,6 +13,8 @@ require (
 require (
 	gioui.org/shader v1.0.8 // indirect
 	github.com/go-text/typesetting v0.2.1 // indirect
+	github.com/gorilla/mux v1.8.1 // indirect
+	github.com/rs/cors v1.11.1 // indirect
 	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect

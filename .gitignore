@@ -16,3 +16,12 @@
 .idea/
 
 lensm
+goasm/.lh
+goasm/.vscode
+goasm/node_modules
+goasm/out
+.lh
+node_modules
+out
+CLAUDE.md
+CLAUDE.md
