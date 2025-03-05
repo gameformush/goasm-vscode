@@ -14,18 +14,14 @@
   "contributes": {
     "commands": [
       {
-        "command": "goasm.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "goasm.showCanvas",
-        "title": "Go Assembly: Show Canvas"
+        "command": "goasm.showAsm",
+        "title": "Go Assembly: Show Assembly View"
       }
     ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./ && node scripts/copy-webview-resources.js",
+    "compile": "tsc -p ./ && GOOS=js GOARCH=wasm go build -o out/webview/main.wasm",
     "watch": "tsc -watch -p ./ --onSuccess \"node scripts/copy-webview-resources.js\"",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",

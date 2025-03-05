@@ -1,19 +1,18 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import * as path from 'path';
 import * as fs from 'fs';
 
 /**
- * Manages the webview panel that displays the canvas
+ * Manages the webview panel that displays the goasm ui 
  */
-class CanvasViewProvider {
+class GoASMViewProvider {
 	/**
 	 * Track the currently panel. Only allow a single panel to exist at a time.
 	 */
-	public static currentPanel: CanvasViewProvider | undefined;
+	public static currentPanel: GoASMViewProvider | undefined;
 
-	private static readonly viewType = 'goasmCanvas';
+	private static readonly viewType = 'goasm';
 
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionUri: vscode.Uri;
@@ -25,15 +24,15 @@ class CanvasViewProvider {
 			: undefined;
 
 		// If we already have a panel, show it.
-		if (CanvasViewProvider.currentPanel) {
-			CanvasViewProvider.currentPanel._panel.reveal(column);
+		if (GoASMViewProvider.currentPanel) {
+			GoASMViewProvider.currentPanel._panel.reveal(column);
 			return;
 		}
 
 		// Otherwise, create a new panel.
 		const panel = vscode.window.createWebviewPanel(
-			CanvasViewProvider.viewType,
-			'Go Assembly Canvas',
+			GoASMViewProvider.viewType,
+			'Go Assembly',
 			column || vscode.ViewColumn.One,
 			{
 				// Enable JavaScript in the webview
@@ -46,7 +45,7 @@ class CanvasViewProvider {
 			}
 		);
 
-		CanvasViewProvider.currentPanel = new CanvasViewProvider(panel, extensionContext.extensionUri);
+		GoASMViewProvider.currentPanel = new GoASMViewProvider(panel, extensionContext.extensionUri);
 	}
 
 	private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
@@ -77,7 +76,7 @@ class CanvasViewProvider {
 				switch (message.command) {
 					case 'ready':
 						// Webview is ready to receive messages
-						console.log('Webview canvas is ready');
+						console.log('Webview goasm is ready');
 						break;
 				}
 			},
@@ -87,7 +86,7 @@ class CanvasViewProvider {
 	}
 
 	public dispose() {
-		CanvasViewProvider.currentPanel = undefined;
+		GoASMViewProvider.currentPanel = undefined;
 
 		// Clean up our resources
 		this._panel.dispose();
@@ -102,7 +101,7 @@ class CanvasViewProvider {
 
 	private _update() {
 		const webview = this._panel.webview;
-		this._panel.title = "Go Assembly Canvas";
+		this._panel.title = "Go Assembly";
 		this._panel.webview.html = this._getHtmlForWebview(webview);
 	}
 
@@ -113,7 +112,7 @@ class CanvasViewProvider {
 			vscode.Uri.joinPath(this._extensionUri, 'out', 'webview', 'main.wasm'),
 		)
 
-		const scriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'out', 'webview', 'index.html');
+		const scriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'src', 'webview', 'index.html');
 
 		// Content security policy
 		const nonce = this._getNonce();
@@ -132,7 +131,7 @@ class CanvasViewProvider {
 				).replace(
 					'<script>',
 					`<script nonce="${nonce}">`
-				).replace("\"{{ WASM_MAIN }}\"", mainAsm.toString());
+				).replace("{{ WASM_MAIN }}", mainAsm.toString());
 			}
 		} catch (error) {
 			console.error(`Failed to read HTML file: ${error}`);
@@ -145,10 +144,10 @@ class CanvasViewProvider {
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${webview.cspSource} http://localhost:*; img-src ${webview.cspSource}; style-src 'unsafe-inline'; script-src 'nonce-${nonce}' 'unsafe-eval'; worker-src blob:;">
-			<title>Go Assembly Canvas</title>
+			<title>Go Assembly</title>
 		</head>
 		<body>
-		<h1>Go Assembly Canvas Failed</h1>
+		<h1>Go Assembly Failed</h1>
 		</body>
 		</html>`;
 	}
@@ -182,13 +181,13 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from goasm!');
 	});
 
-	// Register the command to show the canvas webview
-	const canvasDisposable = vscode.commands.registerCommand('goasm.showCanvas', () => {
-		CanvasViewProvider.createOrShow(context);
+	// Register the command to show the goasm webview
+	const goasmDisposable = vscode.commands.registerCommand('goasm.showAsm', () => {
+		GoASMViewProvider.createOrShow(context);
 	});
 
 	context.subscriptions.push(helloDisposable);
-	context.subscriptions.push(canvasDisposable);
+	context.subscriptions.push(goasmDisposable);
 }
 
 // This method is called when your extension is deactivated
