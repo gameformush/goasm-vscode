@@ -7,7 +7,7 @@ package goobj
 import (
 	"bytes"
 	"encoding/binary"
-	"loov.dev/lensm/internal/go/src/abi"
+	"github.com/gameformush/goasm-vscode/internal/go/src/abi"
 )
 
 // CUFileIndex is used to index the filenames that are stored in the

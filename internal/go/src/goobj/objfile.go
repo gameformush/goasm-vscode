@@ -19,7 +19,7 @@
 package goobj
 
 import (
-	"loov.dev/lensm/internal/go/src/bio"
+	"github.com/gameformush/goasm-vscode/internal/go/src/bio"
 	"encoding/binary"
 	"errors"
 	"fmt"

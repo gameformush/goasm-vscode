@@ -5,7 +5,7 @@
 package objabi
 
 import (
-	"loov.dev/lensm/internal/go/src/abi"
+	"github.com/gameformush/goasm-vscode/internal/go/src/abi"
 	"strings"
 )
 

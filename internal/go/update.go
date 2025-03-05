@@ -50,10 +50,10 @@ func copydir(srcdir, dstdir string) {
 		dstfile := filepath.Join(dstdir, base)
 		data := must(os.ReadFile(path))
 
-		data = bytes.ReplaceAll(data, []byte(`	"cmd/internal/`), []byte(`	"loov.dev/lensm/internal/go/src/`))
-		data = bytes.ReplaceAll(data, []byte(`import "cmd/internal/`), []byte(`import "loov.dev/lensm/internal/go/src/`))
-		data = bytes.ReplaceAll(data, []byte(`	"internal/`), []byte(`	"loov.dev/lensm/internal/go/src/`))
-		data = bytes.ReplaceAll(data, []byte(`import "internal/`), []byte(`import "loov.dev/lensm/internal/go/src/`))
+		data = bytes.ReplaceAll(data, []byte(`	"cmd/internal/`), []byte(`	"github.com/gameformush/goasm-vscode/internal/go/src/`))
+		data = bytes.ReplaceAll(data, []byte(`import "cmd/internal/`), []byte(`import "github.com/gameformush/goasm-vscode/internal/go/src/`))
+		data = bytes.ReplaceAll(data, []byte(`	"internal/`), []byte(`	"github.com/gameformush/goasm-vscode/internal/go/src/`))
+		data = bytes.ReplaceAll(data, []byte(`import "internal/`), []byte(`import "github.com/gameformush/goasm-vscode/internal/go/src/`))
 
 		return os.WriteFile(dstfile, data, 0755)
 	}))

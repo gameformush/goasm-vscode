@@ -5,8 +5,8 @@
 package objabi
 
 import (
-	"loov.dev/lensm/internal/go/src/abi"
-	"loov.dev/lensm/internal/go/src/buildcfg"
+	"github.com/gameformush/goasm-vscode/internal/go/src/abi"
+	"github.com/gameformush/goasm-vscode/internal/go/src/buildcfg"
 )
 
 func StackNosplit(race bool) int {

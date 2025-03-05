@@ -7,10 +7,10 @@
 package objfile
 
 import (
-	"loov.dev/lensm/internal/go/src/archive"
-	"loov.dev/lensm/internal/go/src/goobj"
-	"loov.dev/lensm/internal/go/src/objabi"
-	"loov.dev/lensm/internal/go/src/sys"
+	"github.com/gameformush/goasm-vscode/internal/go/src/archive"
+	"github.com/gameformush/goasm-vscode/internal/go/src/goobj"
+	"github.com/gameformush/goasm-vscode/internal/go/src/objabi"
+	"github.com/gameformush/goasm-vscode/internal/go/src/sys"
 	"debug/dwarf"
 	"debug/gosym"
 	"errors"

@@ -7,9 +7,9 @@ import (
 	"sort"
 	"strings"
 
-	"loov.dev/lensm/internal/disasm"
-	godisasm "loov.dev/lensm/internal/go/src/disasm"
-	"loov.dev/lensm/internal/go/src/objfile"
+	"github.com/gameformush/goasm-vscode/internal/disasm"
+	godisasm "github.com/gameformush/goasm-vscode/internal/go/src/disasm"
+	"github.com/gameformush/goasm-vscode/internal/go/src/objfile"
 )
 
 var _ disasm.File = (*File)(nil)

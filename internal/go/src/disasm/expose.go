@@ -1,6 +1,6 @@
 package disasm
 
-import "loov.dev/lensm/internal/go/src/objfile"
+import "github.com/gameformush/goasm-vscode/internal/go/src/objfile"
 
 func (d *Disasm) Syms() []objfile.Sym { return d.syms }
 func (d *Disasm) TextStart() uint64   { return d.textStart }

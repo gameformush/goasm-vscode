@@ -15,9 +15,9 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	"loov.dev/lensm/internal/disasm"
-	"loov.dev/lensm/internal/goobj"
-	"loov.dev/lensm/internal/wasmobj"
+	"github.com/gameformush/goasm-vscode/internal/disasm"
+	"github.com/gameformush/goasm-vscode/internal/goobj"
+	"github.com/gameformush/goasm-vscode/internal/wasmobj"
 )
 
 var workInProgressWASM bool

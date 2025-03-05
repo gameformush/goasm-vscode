@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"loov.dev/lensm/internal/disasm"
-	godisasm "loov.dev/lensm/internal/go/src/disasm"
+	"github.com/gameformush/goasm-vscode/internal/disasm"
+	godisasm "github.com/gameformush/goasm-vscode/internal/go/src/disasm"
 )
 
 var rxRefAbs = regexp.MustCompile(`\s0x[\da-fA-F]+$`)

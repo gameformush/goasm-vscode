@@ -7,8 +7,8 @@ package objabi
 import (
 	"flag"
 	"fmt"
-	"loov.dev/lensm/internal/go/src/bisect"
-	"loov.dev/lensm/internal/go/src/buildcfg"
+	"github.com/gameformush/goasm-vscode/internal/go/src/bisect"
+	"github.com/gameformush/goasm-vscode/internal/go/src/buildcfg"
 	"io"
 	"log"
 	"os"

@@ -10,7 +10,7 @@ import (
 	"github.com/tetratelabs/wabin/binary"
 	"github.com/tetratelabs/wabin/wasm"
 
-	"loov.dev/lensm/internal/disasm"
+	"github.com/gameformush/goasm-vscode/internal/disasm"
 )
 
 var _ disasm.File = (*File)(nil)

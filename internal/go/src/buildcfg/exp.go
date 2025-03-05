@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"strings"
 
-	"loov.dev/lensm/internal/go/src/goexperiment"
+	"github.com/gameformush/goasm-vscode/internal/go/src/goexperiment"
 )
 
 // ExperimentFlags represents a set of GOEXPERIMENT flags relative to a baseline

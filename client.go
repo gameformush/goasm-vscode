@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"time"
 
-	"loov.dev/lensm/internal/disasm"
+	"github.com/gameformush/goasm-vscode/internal/disasm"
 )
 
 // Client handles communication with the lensm HTTP server

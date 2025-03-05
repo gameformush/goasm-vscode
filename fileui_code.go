@@ -19,8 +19,8 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	"loov.dev/lensm/internal/disasm"
-	"loov.dev/lensm/internal/f32color"
+	"github.com/gameformush/goasm-vscode/internal/disasm"
+	"github.com/gameformush/goasm-vscode/internal/f32color"
 )
 
 type CodeUI struct {

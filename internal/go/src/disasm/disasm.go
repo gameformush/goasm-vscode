@@ -22,8 +22,8 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"loov.dev/lensm/internal/go/src/objfile"
-	"loov.dev/lensm/internal/go/src/src"
+	"github.com/gameformush/goasm-vscode/internal/go/src/objfile"
+	"github.com/gameformush/goasm-vscode/internal/go/src/src"
 
 	"golang.org/x/arch/arm/armasm"
 	"golang.org/x/arch/arm64/arm64asm"

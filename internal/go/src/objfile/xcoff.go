@@ -9,7 +9,7 @@ package objfile
 import (
 	"debug/dwarf"
 	"fmt"
-	"loov.dev/lensm/internal/go/src/xcoff"
+	"github.com/gameformush/goasm-vscode/internal/go/src/xcoff"
 	"io"
 	"unicode"
 )

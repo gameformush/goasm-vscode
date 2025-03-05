@@ -6,7 +6,7 @@
 package objfile
 
 import (
-	"loov.dev/lensm/internal/go/src/archive"
+	"github.com/gameformush/goasm-vscode/internal/go/src/archive"
 	"cmp"
 	"debug/dwarf"
 	"debug/gosym"

@@ -9,8 +9,8 @@ package archive
 import (
 	"bufio"
 	"bytes"
-	"loov.dev/lensm/internal/go/src/bio"
-	"loov.dev/lensm/internal/go/src/goobj"
+	"github.com/gameformush/goasm-vscode/internal/go/src/bio"
+	"github.com/gameformush/goasm-vscode/internal/go/src/goobj"
 	"errors"
 	"fmt"
 	"io"

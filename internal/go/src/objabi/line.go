@@ -5,7 +5,7 @@
 package objabi
 
 import (
-	"loov.dev/lensm/internal/go/src/buildcfg"
+	"github.com/gameformush/goasm-vscode/internal/go/src/buildcfg"
 	"os"
 	"path/filepath"
 	"runtime"

@@ -4,7 +4,7 @@
 
 package goobj
 
-import "loov.dev/lensm/internal/go/src/buildcfg"
+import "github.com/gameformush/goasm-vscode/internal/go/src/buildcfg"
 
 // Builtin (compiler-generated) function references appear
 // frequently. We assign special indices for them, so they

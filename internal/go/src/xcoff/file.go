@@ -10,7 +10,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"loov.dev/lensm/internal/go/src/saferio"
+	"github.com/gameformush/goasm-vscode/internal/go/src/saferio"
 	"io"
 	"os"
 	"strings"

@@ -5,7 +5,7 @@
 package abi
 
 import (
-	"loov.dev/lensm/internal/go/src/goarch"
+	"github.com/gameformush/goasm-vscode/internal/go/src/goarch"
 	"unsafe"
 )
 

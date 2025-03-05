@@ -11,9 +11,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"loov.dev/lensm/internal/disasm"
-	"loov.dev/lensm/internal/goobj"
-	"loov.dev/lensm/internal/wasmobj"
+	"github.com/gameformush/goasm-vscode/internal/disasm"
+	"github.com/gameformush/goasm-vscode/internal/goobj"
+	"github.com/gameformush/goasm-vscode/internal/wasmobj"
 )
 
 // Server handles HTTP requests for disassembly operations

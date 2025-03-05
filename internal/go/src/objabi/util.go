@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"loov.dev/lensm/internal/go/src/buildcfg"
+	"github.com/gameformush/goasm-vscode/internal/go/src/buildcfg"
 )
 
 const (
