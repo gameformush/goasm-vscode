@@ -123,7 +123,7 @@ class GoASMViewProvider {
 			vscode.Uri.joinPath(this._extensionUri, 'out', 'webview', 'main.wasm'),
 		)
 
-		const scriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'src', 'webview', 'index.html');
+		const scriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'media', 'index.html');
 
 		// Content security policy
 		const nonce = this._getNonce();

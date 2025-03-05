@@ -2,8 +2,6 @@
 
 A VSCode extension for viewing Go assembly code directly from your editor. This extension leverages the [lensm](https://github.com/loov/lensm) project to provide a seamless interface for examining Go assembly alongside your source code.
 
-![Go Assembly Viewer in action](screenshot.gif)
-
 ## Features
 
 - View disassembled Go code with corresponding source lines
@@ -28,10 +26,10 @@ The extension requires the lensm server to be running. To install and run lensm:
 
 ```bash
 # Install lensm
-go install github.com/loov/lensm@latest
+go install github.com/gameformush/goasm-vscode@latest
 
 # Run lensm in server mode
-lensm -server -addr localhost:8080
+goasm-vscode -server -addr localhost:8080
 ```
 
 ## Usage
@@ -52,6 +50,10 @@ This extension contributes the following settings:
 - Large binaries may take some time to load
 
 ## Release Notes
+
+### 0.0.2
+
+Fix extension file management
 
 ### 0.0.1
 
