@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,11 +10,11 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	"github.com/gameformush/goasm-vscode/internal/disasm"
 	"github.com/gameformush/goasm-vscode/internal/goobj"
 	"github.com/gameformush/goasm-vscode/internal/wasmobj"
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 // Server handles HTTP requests for disassembly operations
@@ -24,6 +25,9 @@ type Server struct {
 
 	// Options for disassembly
 	options disasm.Options
+
+	// HTTP server
+	httpServer *http.Server
 }
 
 // NewServer creates a new HTTP server for disassembly operations
@@ -36,9 +40,10 @@ func NewServer(context int) *Server {
 	}
 }
 
-// StartServer starts the HTTP server on the specified address
-func StartServer(addr string, context int) {
-	server := NewServer(context)
+// StartServer starts the HTTP server on the specified address and returns the server instance
+// The server runs in a goroutine and gracefully shuts down on SIGTERM
+func StartServer(addr string, lineContext int) *Server {
+	server := NewServer(lineContext)
 
 	// Create a new router using Gorilla Mux
 	r := mux.NewRouter()
@@ -61,16 +66,36 @@ func StartServer(addr string, context int) {
 		MaxAge:           86400, // Maximum value not ignored by any major browser (1 day)
 		Debug:            true,  // Enable debugging for troubleshooting
 		// Set the Vary header to tell browsers to cache responses based on Origin header
-		OptionsPassthrough: false,
+		OptionsPassthrough:   false,
 		OptionsSuccessStatus: http.StatusOK,
 	})
 
 	// Wrap the router with the CORS handler
 	handler := c.Handler(r)
 
-	// Start the server
-	log.Printf("Starting server on %s", addr)
-	log.Fatal(http.ListenAndServe(addr, handler))
+	// Create HTTP server
+	server.httpServer = &http.Server{
+		Addr:    addr,
+		Handler: handler,
+	}
+
+	// Channel to signal when server is ready
+	serverReady := make(chan struct{})
+
+	// Start server in a goroutine
+	go func() {
+		log.Printf("Starting server on %s", addr)
+		serverReady <- struct{}{} // Signal that server is starting
+
+		if err := server.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Server error: %v", err)
+		}
+	}()
+
+	// Wait for server to start
+	<-serverReady
+
+	return server
 }
 
 // loggingMiddleware logs all requests with their paths and methods
@@ -79,6 +104,20 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		log.Printf("%s %s", r.Method, r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
+}
+
+func (s *Server) addFile(path string, file disasm.File) {
+	s.activeFilesMutex.Lock()
+	s.activeFiles[path] = file
+	s.activeFilesMutex.Unlock()
+}
+
+// Shutdown gracefully shuts down the server
+func (s *Server) Shutdown(ctx context.Context) error {
+	if s.httpServer != nil {
+		return s.httpServer.Shutdown(ctx)
+	}
+	return nil
 }
 
 // handleFiles handles operations on the collection of files

@@ -6,6 +6,7 @@
   "engines": {
     "vscode": "^1.97.0"
   },
+  "publisher": "gameformush",
   "categories": [
     "Other"
   ],
@@ -17,7 +18,17 @@
         "command": "goasm.showAsm",
         "title": "Go Assembly: Show Assembly View"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Go Assembly",
+      "properties": {
+        "goasm.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "URL of the lensm server"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

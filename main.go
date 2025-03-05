@@ -1,19 +1,24 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"image"
 	"image/color"
 	"log"
 	"os"
+	"os/signal"
 	"runtime/pprof"
 	"strings"
+	"syscall"
+	"time"
 
 	"gioui.org/app"
 	"gioui.org/text"
 	"gioui.org/unit"
 	"gioui.org/widget/material"
+	"github.com/gameformush/goasm-vscode/internal/goobj"
 )
 
 func main() {
@@ -21,7 +26,7 @@ func main() {
 	textSize := flag.Int("text-size", 12, "default font size")
 	filter := flag.String("filter", "", "filter the functions by regexp")
 	watch := flag.Bool("watch", false, "auto reload executable")
-	context := flag.Int("context", 3, "source line context")
+	lineContext := flag.Int("context", 3, "source line context")
 	font := flag.String("font", "", "user font")
 	darkMode := flag.Bool("dark", false, "use dark theme")
 
@@ -35,7 +40,7 @@ func main() {
 	flag.Parse()
 	exePath := flag.Arg(0)
 
-	if exePath == "" {
+	if exePath == "" && !*serverMode && !*clientMode {
 		fmt.Fprintln(os.Stderr, "lensm <exePath>")
 		flag.Usage()
 		os.Exit(1)
@@ -49,10 +54,48 @@ func main() {
 		os.Exit(1)
 	}
 
+	var server *Server
 	// Start in server mode if requested
 	if *serverMode {
 		fmt.Printf("Starting lensm in server mode on %s\n", *serverAddr)
-		StartServer(*serverAddr, *context)
+		server = StartServer(*serverAddr, *lineContext)
+
+		if exePath != "" {
+			fmt.Printf("Loading file: %s\n", exePath)
+			file, err := goobj.Load(exePath)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Failed to load %s: %v\n", exePath, err)
+			} else {
+				server.addFile(exePath, file)
+			}
+		}
+
+		// Create a channel to wait for server termination
+		done := make(chan bool)
+
+		// Set up signal handling for main goroutine
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+		fmt.Println("Server is running. Press Ctrl+C to stop")
+
+		// Wait for signal
+		sig := <-sigChan
+		fmt.Printf("Received signal: %v, shutting down server...\n", sig)
+
+		// Create context with timeout for shutdown
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		// Gracefully shutdown the server
+		if err := server.Shutdown(ctx); err != nil {
+			fmt.Printf("Server shutdown error: %v\n", err)
+		} else {
+			fmt.Println("Server gracefully stopped")
+		}
+
+		// Signal received, close the done channel
+		close(done)
 		return
 	}
 
@@ -94,7 +137,7 @@ func main() {
 	ui.Config = FileUIConfig{
 		Path:      exePath,
 		Watch:     *watch,
-		Context:   *context,
+		Context:   *lineContext,
 		ServerURL: serverURL,
 	}
 	ui.Funcs.SetFilter(*filter)

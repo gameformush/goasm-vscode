@@ -84,7 +84,7 @@ func (ui *FileUI) Run(w *app.Window) error {
 	go func() {
 		// If using server mode, load the file from the server
 		if ui.Config.ServerURL != "" {
-			file, err := LoadNetworkFile(ui.Config.ServerURL, ui.Config.Path)
+			file, err := LoadNetworkFile(ui.Config.ServerURL)
 			loadFinished(file, err)
 			return // No file watching in client mode (server handles it)
 		}

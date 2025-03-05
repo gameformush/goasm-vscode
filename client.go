@@ -13,6 +13,8 @@ import (
 	"github.com/gameformush/goasm-vscode/internal/disasm"
 )
 
+// The response format is simpler than initially implemented
+
 // Client handles communication with the lensm HTTP server
 type Client struct {
 	baseURL    string
@@ -206,15 +208,21 @@ var _ disasm.File = (*NetworkFile)(nil)
 var _ disasm.Func = (*NetworkFunc)(nil)
 
 // NewNetworkFile creates a new NetworkFile
-func NewNetworkFile(client *Client, path string) (*NetworkFile, error) {
+func NewNetworkFile(client *Client) (*NetworkFile, error) {
+	files, err := client.GetFiles()
+	if err != nil {
+		return nil, err
+	}
+	if len(files) == 0 {
+		return nil, fmt.Errorf("no files available")
+	}
+
+	path := files[0] // TODO allow user to select file
+
 	file := &NetworkFile{
 		client:  client,
 		path:    path,
 		funcMap: make(map[string]disasm.Func),
-	}
-
-	if err := client.LoadFile(path); err != nil {
-		return nil, err
 	}
 
 	// Get all functions
@@ -281,8 +289,31 @@ func (f *NetworkFunc) Load(opt disasm.Options) *disasm.Code {
 	return code
 }
 
+// GetFiles retrieves a list of available binary files from the server
+func (c *Client) GetFiles() ([]string, error) {
+	resp, err := c.httpClient.Get(c.baseURL + "/api/files")
+	if err != nil {
+		return nil, fmt.Errorf("error sending request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("server error (status %d): %s", resp.StatusCode, body)
+	}
+
+	var result struct {
+		Files []string `json:"files"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("error decoding response: %w", err)
+	}
+
+	return result.Files, nil
+}
+
 // LoadNetworkFile loads a file using the HTTP client
-func LoadNetworkFile(serverURL, filePath string) (disasm.File, error) {
+func LoadNetworkFile(serverURL string) (disasm.File, error) {
 	client := NewClient(serverURL)
-	return NewNetworkFile(client, filePath)
+	return NewNetworkFile(client)
 }

@@ -70,6 +70,17 @@ class GoASMViewProvider {
 			this._disposables
 		);
 
+		// Listen for configuration changes
+		vscode.workspace.onDidChangeConfiguration(
+			e => {
+				if (e.affectsConfiguration('goasm.serverUrl')) {
+					this._update();
+				}
+			},
+			null,
+			this._disposables
+		);
+
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
 			message => {
@@ -116,22 +127,31 @@ class GoASMViewProvider {
 
 		// Content security policy
 		const nonce = this._getNonce();
+		const serverUrl = vscode.workspace.getConfiguration('goasm').get('serverUrl', 'http://localhost:8080');
 
 		// Read the HTML file directly or provide a fallback
 		try {
 			// This may not work in all environments due to extension packaging
 			if (fs.existsSync(scriptPathOnDisk.fsPath)) {
-				const htmlContent = fs.readFileSync(scriptPathOnDisk.fsPath, 'utf8');
+				let htmlContent = fs.readFileSync(scriptPathOnDisk.fsPath, 'utf8');
 
 				// Add CSP and nonce to the HTML content
-				return htmlContent.replace(
+				htmlContent = htmlContent.replace(
 					'<head>',
 					`<head>
-					<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${webview.cspSource} http://localhost:*; img-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' 'unsafe-eval'; worker-src blob:;">`
+					<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${webview.cspSource} ${serverUrl}; img-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' 'unsafe-eval'; worker-src blob:;">`
 				).replace(
 					'<script>',
 					`<script nonce="${nonce}">`
 				).replace("{{ WASM_MAIN }}", mainAsm.toString());
+				
+				// Update the server URL in the Go wasm client
+				htmlContent = htmlContent.replace(
+					'this.argv = ["js", "-client", "-dark"];',
+					`this.argv = ["js", "-client", "-dark", "-addr", "${serverUrl}"];`
+				);
+				
+				return htmlContent;
 			}
 		} catch (error) {
 			console.error(`Failed to read HTML file: ${error}`);
@@ -143,7 +163,7 @@ class GoASMViewProvider {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${webview.cspSource} http://localhost:*; img-src ${webview.cspSource}; style-src 'unsafe-inline'; script-src 'nonce-${nonce}' 'unsafe-eval'; worker-src blob:;">
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${webview.cspSource} ${serverUrl}; img-src ${webview.cspSource}; style-src 'unsafe-inline'; script-src 'nonce-${nonce}' 'unsafe-eval'; worker-src blob:;">
 			<title>Go Assembly</title>
 		</head>
 		<body>
