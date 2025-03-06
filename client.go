@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"regexp"
 	"time"
 
 	"github.com/gameformush/goasm-vscode/internal/disasm"
@@ -192,7 +191,6 @@ func (c *Client) GetFunctionCode(path string, functionName string, context int) 
 type NetworkFile struct {
 	client  *Client
 	path    string
-	filter  *regexp.Regexp
 	funcs   []disasm.Func
 	funcMap map[string]disasm.Func
 }

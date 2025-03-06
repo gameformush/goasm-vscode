@@ -157,10 +157,6 @@ var (
 	secondaryBackground = color.NRGBA{R: 0xF0, G: 0xF0, B: 0xF0, A: 0xFF}
 	splitterColor       = color.NRGBA{R: 0x80, G: 0x80, B: 0x80, A: 0xFF}
 
-	// Light theme colors
-	lightSecondaryBackground = color.NRGBA{R: 0xF0, G: 0xF0, B: 0xF0, A: 0xFF}
-	lightSplitterColor       = color.NRGBA{R: 0x80, G: 0x80, B: 0x80, A: 0xFF}
-
 	// Dark theme colors
 	darkSecondaryBackground = color.NRGBA{R: 0x22, G: 0x22, B: 0x22, A: 0xFF}
 	darkSplitterColor       = color.NRGBA{R: 0x60, G: 0x60, B: 0x60, A: 0xFF}
